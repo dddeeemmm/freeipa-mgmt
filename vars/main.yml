@@ -4,6 +4,3 @@ ipa_host: '{{ ipa_servers | random }}'
 
 ipa_user_pwd: "{{ ipa_random if item.state == 'present' else '' }}"
 ipa_user_upd_pwd: "{{ 'always' if item.state == 'present' else 'on_create' }}"
-ipa_user_name: '{{ item.uid }}'
-ipa_user_sn: '{{ item.uid }}'
-ipa_user_mail: '{{ item.uid }}@{{ ipa_mail_domain }}'
