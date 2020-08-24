@@ -1,0 +1,21 @@
+---
+
+- name: include {{ item }}
+  include_vars: '{{ item }}'
+
+- name: setup sudo rule
+  ipa_sudorule:
+    state: '{{ rule.state }}'
+    name: '{{ rule.name | d (rule.host) }}'
+    description: "{{ rule.description | d ('') }}"
+    cmdcategory: all
+    host: '{{ rule.host }}'
+    user: '{{ rule.user }}'
+    ipa_host: '{{ ipa_host }}'
+    ipa_user: '{{ ipa_username }}'
+    ipa_pass: '{{ ipa_password }}'
+    validate_certs: '{{ ipa_validate_certs }}'
+  with_items: '{{ ipa_sudorules }}'
+  loop_control:
+    loop_var: rule
+  ignore_errors: true

@@ -1,0 +1,5 @@
+---
+
+ipa_users:
+  - { state: enabled, uid: admin  }
+  - { state: present, uid: manger }

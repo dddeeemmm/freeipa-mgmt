@@ -1,0 +1,44 @@
+---
+
+- name: generate password
+  set_fact:
+    ipa_user_random: "{{ lookup('password', '/dev/null length=12 chars=ascii_letters,digits,hexdigits') }}"
+  when: item.pwd is not defined or item.pwd == ''
+
+- name: ipa user
+  ipa_user:
+    state: '{{ item.state | d (ipa_user_state) }}'
+    uid: '{{ item.uid | d (ipa_user_uid) }}'
+    password: '{{ item.pwd | d (ipa_user_random) }}'
+    update_password: '{{ item.upd_pwd | d (ipa_user_upd_pwd) }}'
+    givenname: '{{ item.name | d (ipa_user_name) }}'
+    sn: '{{ item.sn | d (ipa_user_sn) }}'
+    mail: '{{ item.mail | d (ipa_user_mail) }}'
+    telephonenumber: '{{ item.phone | d (ipa_user_phone) }}'
+    sshpubkey: '{{ item.ssh | d (ipa_user_ssh) }}'
+    ipa_host: '{{ ipa_host }}'
+    ipa_user: '{{ ipa_username }}'
+    ipa_pass: '{{ ipa_password }}'
+    validate_certs: '{{ ipa_validate_certs }}'
+  register: create_user
+  ignore_errors: true
+
+- name: send e-mail
+  mail:
+    host: '{{ ipa_mail_host }}'
+    port: '{{ ipa_mail_port }}'
+    username: '{{ ipa_mail_username }}'
+    password: '{{ ipa_mail_password }}'
+    from: '{{ ipa_mail_from }}'
+    to: '{{ item.mail | d (ipa_user_mail) }}'
+    subject: '{{ ipa_mail_subject }}'
+    body: '{{ ipa_mail_body }}'
+    charset: '{{ ipa_mail_charset }}'
+    subtype: '{{ ipa_mail_subtype }}'
+    secure: '{{ ipa_mail_secure }}'
+  delegate_to: localhost
+  when:
+    - item.state == 'present'
+    - create_user is changed
+    - ipa_mail_send
+

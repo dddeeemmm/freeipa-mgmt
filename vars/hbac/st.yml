@@ -1,0 +1,6 @@
+---
+
+ipa_hbacrules:
+  - state: present
+    host: app.st.domain.pro
+    user: admin

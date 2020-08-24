@@ -1,0 +1,21 @@
+galaxy_info:
+  author: Dmitrij Petrov
+  description: Manage Free IPA entities and content (users, dns zones, groups, hbac, sudo)
+               Create user password and send template email
+
+  license: MIT
+
+  min_ansible_version: 2.9
+
+  platforms:
+   - name: CentOS
+     versions:
+     - all
+   - name: Debian
+     versions:
+     - all
+
+  galaxy_tags:
+    - freeipa
+
+dependencies: []

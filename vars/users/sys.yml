@@ -1,0 +1,8 @@
+---
+
+ipa_user_mail: 'tech@{{ ipa_mail_domain }}'
+ipa_mail_send: false
+ipa_users:
+  - state: present
+    uid: sys.service
+    pwd: password

@@ -1,0 +1,21 @@
+---
+
+- name: include {{ item }}
+  include_vars: '{{ item }}'
+
+- name: setup hbac rules
+  ipa_hbacrule:
+    state: '{{ rule.state }}'
+    name: '{{ rule.host }}'
+    description: "{{ rule.description | d ('') }}"
+    host: '{{ rule.host }}'
+    user: '{{ rule.user }}'
+    servicecategory: all
+    ipa_host: '{{ ipa_host }}'
+    ipa_user: '{{ ipa_username }}'
+    ipa_pass: '{{ ipa_password }}'
+    validate_certs: '{{ ipa_validate_certs }}'
+  with_items: '{{ ipa_hbacrules }}'
+  loop_control:
+    loop_var: rule
+  ignore_errors: true

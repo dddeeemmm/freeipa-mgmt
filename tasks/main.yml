@@ -1,0 +1,32 @@
+---
+
+- include: asserts.yml
+
+- include_vars: vars/{{ ipa_mode }}/{{ ipa_varlist }}.yml
+  when: ipa_mode == 'users' or ipa_mode == 'dns'
+
+- include: user.yml
+  with_items: '{{ ipa_users }}'
+  when: ipa_mode == 'users'
+
+- include: dnszone.yml
+  when: ipa_mode == 'dns'
+
+- name: get vars
+  find:
+    paths: '{{ role_path }}/vars/{{ ipa_mode }}'
+    file_type: file
+  register: get_vars
+  when: ipa_mode == 'groups' or ipa_mode == 'hbac' or ipa_mode == 'sudo'
+
+- include: group.yml
+  with_items: "{{ get_vars.files | map (attribute='path') | list }}"
+  when:  ipa_mode == 'groups'
+
+- include: hbacrule.yml
+  with_items: "{{ get_vars.files | map (attribute='path') | list }}"
+  when:  ipa_mode == 'hbac'
+
+- include: sudorule.yml
+  with_items: "{{ get_vars.files | map (attribute='path') | list }}"
+  when:  ipa_mode == 'sudo'

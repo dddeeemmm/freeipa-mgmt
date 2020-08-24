@@ -1,0 +1,4 @@
+---
+
+ipa_dnsrecords:
+  - { state: present, type: A, name: app, value: 192.168.0.1 }

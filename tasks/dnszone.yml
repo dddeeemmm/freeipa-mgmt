@@ -1,0 +1,25 @@
+---
+
+- name: '{{ ipa_dnszone_state }} {{ ipa_varlist }} dns zone'
+  ipa_dnszone:
+    ipa_host: '{{ ipa_host }}'
+    ipa_user: '{{ ipa_username }}'
+    ipa_pass: '{{ ipa_password }}'
+    zone_name: '{{ ipa_varlist }}'
+    state: '{{ ipa_dnszone_state }}'
+    dynamicupdate: '{{ ipa_dnszone_dynamicupdate }}'
+    validate_certs: '{{ ipa_validate_certs }}'
+
+- name: 'edit dns records'
+  ipa_dnsrecord:
+    ipa_host: '{{ ipa_host }}'
+    ipa_user: '{{ ipa_username }}'
+    ipa_pass: '{{ ipa_password }}'
+    zone_name: '{{ ipa_varlist }}'
+    record_type: '{{ item.type }}'
+    record_name: '{{ item.name }}'
+    record_value: '{{ item.value }}'
+    state: '{{ item.state }}'
+    validate_certs: '{{ ipa_validate_certs }}'
+  loop: '{{ ipa_dnsrecords }}'
+  when: ipa_dnszone_state == 'present'

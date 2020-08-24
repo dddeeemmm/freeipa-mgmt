@@ -1,0 +1,43 @@
+---
+
+- block:
+    - pause:
+        prompt: IPA Mode (users | groups | dns | hbac | sudo)
+        echo: yes
+      register: result
+    - name: set ipa_mode from user input
+      set_fact:
+        ipa_mode: '{{ result.user_input }}'
+  when: ipa_mode is not defined or ipa_mode == ''
+
+- block:
+    - pause:
+        prompt: Enter var-list name
+        echo: yes
+      register: result
+    - name: set var-list from user input
+      set_fact:
+        ipa_varlist: '{{ result.user_input }}'
+  when:
+    - ipa_varlist is not defined or ipa_varlist == ''
+    - ipa_mode == 'users' or ipa_mode == 'dns'
+
+- block:
+    - pause:
+        prompt: Username
+        echo: yes
+      register: result
+    - name: set ipa_username from user input
+      set_fact:
+        ipa_username: '{{ result.user_input }}'
+  when: ipa_username is not defined or ipa_username == ''
+
+- block:
+    - pause:
+        prompt: Password
+        echo: no
+      register: result
+    - name: set ipa_password from user input
+      set_fact:
+        ipa_password: '{{ result.user_input }}'
+  when: ipa_password is not defined or ipa_password == ''

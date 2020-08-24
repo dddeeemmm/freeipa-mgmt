@@ -1,0 +1,23 @@
+---
+
+- name: include {{ item }}
+  include_vars: '{{ item }}'
+
+- name: '{{ ipa_group_state }} {{ item | basename | splitext | first }}'
+  ipa_group:
+    name: '{{ item | basename | splitext | first }}'
+    state: '{{ ipa_group_state }}'
+    ipa_host: '{{ ipa_host }}'
+    ipa_user: '{{ ipa_username }}'
+    ipa_pass: '{{ ipa_password }}'
+    validate_certs: '{{ ipa_validate_certs }}'
+
+- name: modify {{ item | basename | splitext | first }}
+  ipa_group:
+    name: '{{ item | basename | splitext | first }}'
+    user: '{{ ipa_users | list }}'
+    ipa_host: '{{ ipa_host }}'
+    ipa_user: '{{ ipa_username }}'
+    ipa_pass: '{{ ipa_password }}'
+    validate_certs: '{{ ipa_validate_certs }}'
+  when: ipa_users != [] or ipa_users != ''

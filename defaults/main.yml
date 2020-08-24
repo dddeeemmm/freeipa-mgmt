@@ -1,0 +1,47 @@
+---
+
+ipa_mode: ''
+ipa_domain: ''
+ipa_servers: []
+ipa_validate_certs: false
+ipa_username: ''
+ipa_password: ''
+
+ipa_user_state: present
+ipa_user_uid: ''
+ipa_user_phone: ''
+ipa_user_ssh: ''
+
+ipa_group_state: present
+
+ipa_dnszone_state: present
+ipa_dnszone_dynamicupdate: true
+
+ipa_mail_send: true
+ipa_mail_domain: ''
+ipa_mail_host: ''
+ipa_mail_port: ''
+ipa_mail_secure: always
+ipa_mail_username: 'tech@{{ ipa_mail_domain }}'
+ipa_mail_password: password
+ipa_mail_from: 'tech@{{ ipa_mail_domain }}'
+ipa_mail_charset: windows-1251
+ipa_mail_subtype: html
+ipa_mail_subject: Вам предоставлен доступ
+ipa_mail_body: |
+  <br>
+  <h3>Вам предоставлен доступ</h3>
+  <br>
+  <hr>
+  <br>
+  <ul>
+      <li>Логин: {{ item.uid }}</li>
+      <li>Пароль: {{ item.pwd | d (ipa_user_random) }}</li>
+  </ul>
+  <br>
+  <hr>
+  <br>
+  <i>Не сообщайте и никому не передавайте ваши учетные данные</i><br>
+  <br>
+
+nolog: true
