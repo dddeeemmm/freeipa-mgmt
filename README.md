@@ -12,7 +12,7 @@ Requirements
 Role Variables
 --------------
 
-    ipa_mode:                       [required] users | groups | dns | hbac | sudo 
+    ipa_mode:                       [required] users | groups | dns | hbac | sudo  | policy | newuser
     ipa_domain:                     [required] domain name
     ipa_host:                       [default: ipa_servers | random ] host where command will be executed
     ipa_servers:                    [required] list of ipa server hosts

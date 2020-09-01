@@ -3,14 +3,39 @@
 - name: include {{ item }}
   include_vars: '{{ item }}'
 
+- name: setup group
+  ipa_group:
+    name: 'sudo.{{ rule.name | d (rule.host) }}.{{ ipa_domain }}'
+    state: '{{ rule.state }}'
+    ipa_host: '{{ ipa_host }}'
+    ipa_user: '{{ ipa_username }}'
+    ipa_pass: '{{ ipa_password }}'
+    validate_certs: '{{ ipa_validate_certs }}'
+  with_items: '{{ ipa_sudorules }}'
+  loop_control:
+    loop_var: rule
+
+- name: modify users in group
+  ipa_group:
+    name: 'sudo.{{ rule.name | d (rule.host) }}.{{ ipa_domain }}'
+    user: '{{ rule.users | list }}'
+    ipa_host: '{{ ipa_host }}'
+    ipa_user: '{{ ipa_username }}'
+    ipa_pass: '{{ ipa_password }}'
+    validate_certs: '{{ ipa_validate_certs }}'
+  with_items: '{{ ipa_sudorules }}'
+  loop_control:
+    loop_var: rule
+  when: rule.users != [] or rule.users != ''
+
 - name: setup sudo rule
   ipa_sudorule:
     state: '{{ rule.state }}'
-    name: '{{ rule.name | d (rule.host) }}'
+    name: '{{ rule.name | d (rule.host) }}.{{ ipa_domain }}'
     description: "{{ rule.description | d ('') }}"
     cmdcategory: all
-    host: '{{ rule.host }}'
-    user: '{{ rule.user }}'
+    host: '{{ rule.host }}.{{ ipa_domain }}'
+    usergroup: 'hbac.{{ rule.name | d (rule.host) }}.{{ ipa_domain }}'
     ipa_host: '{{ ipa_host }}'
     ipa_user: '{{ ipa_username }}'
     ipa_pass: '{{ ipa_password }}'

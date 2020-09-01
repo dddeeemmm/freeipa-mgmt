@@ -2,31 +2,63 @@
 
 - include: asserts.yml
 
-- include_vars: vars/{{ ipa_mode }}/{{ ipa_varlist }}.yml
-  when: ipa_mode == 'users' or ipa_mode == 'dns'
 
-- include: user.yml
-  with_items: '{{ ipa_users }}'
-  when: ipa_mode == 'users'
+- block:
 
-- include: dnszone.yml
+    - include_vars: vars/users/{{ ipa_varlist }}.yml
+
+    - include: user.yml
+      with_items: '{{ ipa_users }}'
+
+  when: ipa_mode == 'users' or ipa_mode == 'newuser'
+
+
+- block:
+
+    - include_vars: vars/zones/{{ ipa_varlist }}.yml
+
+    - include: dnszone.yml
+
   when: ipa_mode == 'dns'
 
-- name: get vars
-  find:
-    paths: '{{ role_path }}/vars/{{ ipa_mode }}'
-    file_type: file
-  register: get_vars
-  when: ipa_mode == 'groups' or ipa_mode == 'hbac' or ipa_mode == 'sudo'
 
-- include: group.yml
-  with_items: "{{ get_vars.files | map (attribute='path') | list }}"
-  when:  ipa_mode == 'groups'
+- block:
 
-- include: hbacrule.yml
-  with_items: "{{ get_vars.files | map (attribute='path') | list }}"
-  when:  ipa_mode == 'hbac'
+    - name: get vars
+      find:
+        paths: '{{ role_path }}/vars/groups'
+        file_type: file
+      register: get_vars
 
-- include: sudorule.yml
-  with_items: "{{ get_vars.files | map (attribute='path') | list }}"
-  when:  ipa_mode == 'sudo'
+    - include: group.yml
+      with_items: "{{ get_vars.files | map (attribute='path') | list }}"
+
+  when: ipa_mode == 'groups' or ipa_mode == 'newuser'
+
+
+- block:
+
+    - name: get vars
+      find:
+        paths: '{{ role_path }}/vars/hbac'
+        file_type: file
+      register: get_vars
+
+    - include: hbacrule.yml
+      with_items: "{{ get_vars.files | map (attribute='path') | list }}"
+
+  when: ipa_mode == 'hbac' or ipa_mode == 'policy' or ipa_mode == 'newuser'
+
+
+- block:
+
+    - name: get vars
+      find:
+        paths: '{{ role_path }}/vars/sudo'
+        file_type: file
+      register: get_vars
+
+    - include: sudorule.yml
+      with_items: "{{ get_vars.files | map (attribute='path') | list }}"
+
+  when: ipa_mode == 'sudo' or ipa_mode == 'policy' or ipa_mode == 'newuser'

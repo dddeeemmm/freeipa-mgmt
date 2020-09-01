@@ -1,0 +1,8 @@
+---
+
+ipa_domain: test.domain.org
+ipa_hbacrules:
+  - state: present
+    host: test
+    users:
+      - test

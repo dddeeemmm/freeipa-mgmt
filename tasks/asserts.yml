@@ -2,7 +2,7 @@
 
 - block:
     - pause:
-        prompt: IPA Mode (users | groups | dns | hbac | sudo)
+        prompt: IPA Mode (users | groups | dns | hbac | sudo | policy | newuser)
         echo: yes
       register: result
     - name: set ipa_mode from user input
@@ -20,7 +20,7 @@
         ipa_varlist: '{{ result.user_input }}'
   when:
     - ipa_varlist is not defined or ipa_varlist == ''
-    - ipa_mode == 'users' or ipa_mode == 'dns'
+    - ipa_mode == 'users' or ipa_mode == 'dns'  or ipa_mode == 'newuser'
 
 - block:
     - pause:

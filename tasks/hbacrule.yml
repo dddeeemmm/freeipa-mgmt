@@ -3,13 +3,38 @@
 - name: include {{ item }}
   include_vars: '{{ item }}'
 
+- name: setup group
+  ipa_group:
+    name: 'hbac.{{ rule.name | d (rule.host) }}.{{ ipa_domain }}'
+    state: '{{ rule.state }}'
+    ipa_host: '{{ ipa_host }}'
+    ipa_user: '{{ ipa_username }}'
+    ipa_pass: '{{ ipa_password }}'
+    validate_certs: '{{ ipa_validate_certs }}'
+  with_items: '{{ ipa_hbacrules }}'
+  loop_control:
+    loop_var: rule
+
+- name: modify users in group
+  ipa_group:
+    name: 'hbac.{{ rule.name | d (rule.host) }}.{{ ipa_domain }}'
+    user: '{{ rule.users | list }}'
+    ipa_host: '{{ ipa_host }}'
+    ipa_user: '{{ ipa_username }}'
+    ipa_pass: '{{ ipa_password }}'
+    validate_certs: '{{ ipa_validate_certs }}'
+  with_items: '{{ ipa_hbacrules }}'
+  loop_control:
+    loop_var: rule
+  when: rule.users != [] or rule.users != ''
+
 - name: setup hbac rules
   ipa_hbacrule:
     state: '{{ rule.state }}'
-    name: '{{ rule.host }}'
+    name: '{{ rule.name | d (rule.host) }}.{{ ipa_domain }}'
     description: "{{ rule.description | d ('') }}"
-    host: '{{ rule.host }}'
-    user: '{{ rule.user }}'
+    host: '{{ rule.host }}.{{ ipa_domain }}'
+    usergroup: 'hbac.{{ rule.name | d (rule.host) }}.{{ ipa_domain }}'
     servicecategory: all
     ipa_host: '{{ ipa_host }}'
     ipa_user: '{{ ipa_username }}'
