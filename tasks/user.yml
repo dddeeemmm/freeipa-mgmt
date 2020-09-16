@@ -1,16 +1,23 @@
 ---
 
-- name: generate password
-  set_fact:
-    ipa_user_random: "{{ lookup('password', '/dev/null length=12 chars=ascii_letters,digits,hexdigits') }}"
+- block:
+
+    - name: generate password
+      set_fact:
+        ipa_user_random: "{{ lookup('password', '/dev/null length=12 chars=ascii_letters,digits,hexdigits') }}"
+
+    - debug:
+        msg: '{{ item.uid }} {{ ipa_user_random }}'
+
   when:
     - item.pwd is not defined or item.pwd == ''
     - item.state == 'present'
 
+
 - name: ipa user
   ipa_user:
     state: '{{ item.state | d (ipa_user_state) }}'
-    uid: '{{ item.uid | d (ipa_user_uid) }}'
+    uid: '{{ item.uid }}'
     password: '{{ item.pwd | d (ipa_user_random) }}'
     update_password: '{{ item.upd_pwd | d (ipa_user_upd_pwd) }}'
     givenname: '{{ item.name | d (ipa_user_name) }}'
@@ -43,4 +50,3 @@
     - item.state == 'present'
     - create_user is changed
     - ipa_mail_send
-

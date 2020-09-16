@@ -18,7 +18,7 @@
 - name: modify users in group
   ipa_group:
     name: 'hbac.{{ rule.name | d (rule.host) }}.{{ ipa_domain }}'
-    user: '{{ rule.users | list }}'
+    user: '{{ rule.users }}'
     ipa_host: '{{ ipa_host }}'
     ipa_user: '{{ ipa_username }}'
     ipa_pass: '{{ ipa_password }}'

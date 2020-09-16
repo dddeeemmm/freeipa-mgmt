@@ -8,7 +8,6 @@ ipa_username: ''
 ipa_password: ''
 
 ipa_user_state: present
-ipa_user_uid: ''
 ipa_user_name: '{{ item.uid }}'
 ipa_user_sn: '{{ item.uid }}'
 ipa_user_mail: '{{ item.uid }}@{{ ipa_mail_domain }}'
